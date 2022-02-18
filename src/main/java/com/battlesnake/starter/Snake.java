@@ -161,7 +161,7 @@ public class Snake {
 
             JsonNode head = moveRequest.get("you").get("head");
             JsonNode body = moveRequest.get("you").get("body");
-            JsonNode snakes = moveRequest.get("snakes");
+            JsonNode snakes = moveRequest.get("board").get("snakes");
 
             int boardHeigth = moveRequest.get("board").get("height").asInt();
             int boardWidth = moveRequest.get("board").get("width").asInt();
