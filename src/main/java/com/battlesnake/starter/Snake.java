@@ -263,7 +263,7 @@ public class Snake {
 
         public void avoidOtherSnakes(JsonNode head, JsonNode snakes, ArrayList<String> possibleMoves) {
             for (int i = 0; i < snakes.size(); i++) {
-                JsonNode body = snakes.get(i);
+                JsonNode body = snakes.get(i).get("body");
                 for (int j = 0; j < body.size(); j++) {
                     JsonNode bodyPart = body.get(j);
                     int headX = head.get("x").asInt();
