@@ -162,6 +162,7 @@ public class Snake {
             JsonNode head = moveRequest.get("you").get("head");
             JsonNode body = moveRequest.get("you").get("body");
             JsonNode snakes = moveRequest.get("board").get("snakes");
+            JsonNode food = moveRequest.get("board").get("food");
 
             int boardHeigth = moveRequest.get("board").get("height").asInt();
             int boardWidth = moveRequest.get("board").get("width").asInt();
@@ -189,6 +190,7 @@ public class Snake {
             // TODO: Using information from 'moveRequest', make your Battlesnake move
             // towards a
             // piece of food on the board
+            findFood(head, food, possibleMoves);
 
             // Choose a random direction to move in
             final int choice = new Random().nextInt(possibleMoves.size());
@@ -285,6 +287,49 @@ public class Snake {
                         }
                     }
                 }
+            }
+        }
+
+        public void findFood(JsonNode head, JsonNode food, ArrayList<String> possibleMoves){
+            // only look for food when multiple moves are available and there is food on the board
+            if(food.size() == 0 || possibleMoves.size() <= 1){
+                return;
+            }
+
+            int headX = head.get("x").asInt();
+            int headY = head.get("y").asInt();
+
+            // Get closest piece of food
+            JsonNode closestFood = food.get(0);
+            int closestFoodDistance = Integer.MAX_VALUE;
+            for(int i = 0; i < food.size(); i++) {
+                JsonNode foodPiece = food.get(i);
+                int foodX = foodPiece.get("x").asInt();
+                int foodY = foodPiece.get("y").asInt();
+                int foodDistance = Math.abs(headX - foodX) + Math.abs(headY - foodY);
+
+                if(foodDistance < closestFoodDistance) {
+                    closestFood = foodPiece;
+                    closestFoodDistance = foodDistance;
+                }
+            }
+
+            // Remove directions leading away from food
+            int foodX = closestFood.get("x").asInt();
+            int foodY = closestFood.get("y").asInt();
+
+            if (headX < foodX) {
+                possibleMoves.remove("left");
+            } else if (headX > foodX) {
+                possibleMoves.remove("right");
+            }
+            if(possibleMoves.size() <= 1){
+                return;
+            }
+            if (headY < foodY) {
+                possibleMoves.remove("down");
+            } else if (headY > foodY) {
+                possibleMoves.remove("up");
             }
         }
 
