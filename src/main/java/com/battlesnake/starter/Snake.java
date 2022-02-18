@@ -178,6 +178,7 @@ public class Snake {
             // TODO Using information from 'moveRequest', don't let your Battlesnake pick a
             // move
             // that would hit its own body
+            avoidMyBody(head, body, possibleMoves);
 
             // TODO: Using information from 'moveRequest', don't let your Battlesnake pick a
             // move
@@ -231,6 +232,30 @@ public class Snake {
                 possibleMoves.remove("down");
             } else if (head.get("y").asInt() == boardHeight - 1) {
                 possibleMoves.remove("up");
+            }
+        }
+
+        public void avoidMyBody(JsonNode head, JsonNode body, ArrayList<String> possibleMoves) {
+            for (int i = 1; i < body.size() - 1; i++) {
+                JsonNode bodyPart = body.get(i);
+                int headX = head.get("x").asInt();
+                int headY = head.get("y").asInt();
+                int bodyPartX = bodyPart.get("x").asInt();
+                int bodyPartY = bodyPart.get("y").asInt();
+
+                if (headY == bodyPartY) {
+                    if (headX - 1 == bodyPartX) {
+                        possibleMoves.remove("left");
+                    } else if (headX + 1 == bodyPartX) {
+                        possibleMoves.remove("right");
+                    }
+                } else if (headX == bodyPartX) {
+                    if (headY - 1 == bodyPartY) {
+                        possibleMoves.remove("down");
+                    } else if (headY + 1 == bodyPartY) {
+                        possibleMoves.remove("up");
+                    }
+                }
             }
         }
 
