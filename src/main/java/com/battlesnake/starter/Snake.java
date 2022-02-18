@@ -20,7 +20,7 @@ import static spark.Spark.get;
 
 /**
  * This is a simple Battlesnake server written in Java.
- * 
+ * <p>
  * For instructions see
  * https://github.com/BattlesnakeOfficial/starter-snake-java/README.md
  */
@@ -95,17 +95,17 @@ public class Snake {
 
         /**
          * This method is called everytime your Battlesnake is entered into a game.
-         * 
+         * <p>
          * Use this method to decide how your Battlesnake is going to look on the board.
          *
          * @return a response back to the engine containing the Battlesnake setup
-         *         values.
+         * values.
          */
         public Map<String, String> index() {
             Map<String, String> response = new HashMap<>();
             response.put("apiversion", "1");
-            response.put("author", ""); // TODO: Your Battlesnake Username
-            response.put("color", "#888888"); // TODO: Personalize
+            response.put("author", "ParanoidBattlesnake"); // TODO: Your Battlesnake Username
+            response.put("color", "#dddddd"); // TODO: Personalize
             response.put("head", "default"); // TODO: Personalize
             response.put("tail", "default"); // TODO: Personalize
             return response;
@@ -113,7 +113,7 @@ public class Snake {
 
         /**
          * This method is called everytime your Battlesnake is entered into a game.
-         * 
+         * <p>
          * Use this method to decide how your Battlesnake is going to look on the board.
          *
          * @param startRequest a JSON data map containing the information about the game
@@ -128,19 +128,19 @@ public class Snake {
         /**
          * This method is called on every turn of a game. It's how your snake decides
          * where to move.
-         * 
+         * <p>
          * Use the information in 'moveRequest' to decide your next move. The
          * 'moveRequest' variable can be interacted with as
          * com.fasterxml.jackson.databind.JsonNode, and contains all of the information
          * about the Battlesnake board for each move of the game.
-         * 
+         * <p>
          * For a full example of 'json', see
          * https://docs.battlesnake.com/references/api/sample-move-request
          *
          * @param moveRequest JsonNode of all Game Board data as received from the
          *                    Battlesnake Engine.
          * @return a Map<String,String> response back to the engine the single move to
-         *         make. One of "up", "down", "left" or "right".
+         * make. One of "up", "down", "left" or "right".
          */
         public Map<String, String> move(JsonNode moveRequest) {
 
@@ -152,15 +152,18 @@ public class Snake {
 
             /*
              * Example how to retrieve data from the request payload:
-             * 
+             *
              * String gameId = moveRequest.get("game").get("id").asText();
-             * 
+             *
              * int height = moveRequest.get("board").get("height").asInt();
-             * 
+             *
              */
 
             JsonNode head = moveRequest.get("you").get("head");
             JsonNode body = moveRequest.get("you").get("body");
+
+            int boardHeigth = moveRequest.get("board").get("height").asInt();
+            int boardWidth = moveRequest.get("board").get("width").asInt();
 
             ArrayList<String> possibleMoves = new ArrayList<>(Arrays.asList("up", "down", "left", "right"));
 
@@ -170,6 +173,7 @@ public class Snake {
             // TODO: Using information from 'moveRequest', find the edges of the board and
             // don't
             // let your Battlesnake move beyond them board_height = ? board_width = ?
+            avoidWalls(head, boardHeigth, boardWidth, possibleMoves);
 
             // TODO Using information from 'moveRequest', don't let your Battlesnake pick a
             // move
@@ -196,7 +200,7 @@ public class Snake {
 
         /**
          * Remove the 'neck' direction from the list of possible moves
-         * 
+         *
          * @param head          JsonNode of the head position e.g. {"x": 0, "y": 0}
          * @param body          JsonNode of x/y coordinates for every segment of a
          *                      Battlesnake. e.g. [ {"x": 0, "y": 0}, {"x": 1, "y": 0},
@@ -217,9 +221,21 @@ public class Snake {
             }
         }
 
+        public void avoidWalls(JsonNode head, int boardHeight, int boardWidth, ArrayList<String> possibleMoves) {
+            if (head.get("x").asInt() == 0) {
+                possibleMoves.remove("left");
+            } else if (head.get("x").asInt() == boardWidth - 1) {
+                possibleMoves.remove("right");
+            } else if (head.get("y").asInt() == 0) {
+                possibleMoves.remove("down");
+            } else if (head.get("y").asInt() == boardHeight - 1) {
+                possibleMoves.remove("up");
+            }
+        }
+
         /**
          * This method is called when a game your Battlesnake was in ends.
-         * 
+         * <p>
          * It is purely for informational purposes, you don't have to make any decisions
          * here.
          *
