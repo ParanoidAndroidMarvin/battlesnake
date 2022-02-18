@@ -226,7 +226,8 @@ public class Snake {
                 possibleMoves.remove("left");
             } else if (head.get("x").asInt() == boardWidth - 1) {
                 possibleMoves.remove("right");
-            } else if (head.get("y").asInt() == 0) {
+            }
+            if (head.get("y").asInt() == 0) {
                 possibleMoves.remove("down");
             } else if (head.get("y").asInt() == boardHeight - 1) {
                 possibleMoves.remove("up");
