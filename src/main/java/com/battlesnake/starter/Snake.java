@@ -107,7 +107,7 @@ public class Snake {
             response.put("author", "ParanoidBattlesnake"); // TODO: Your Battlesnake Username
             response.put("color", "#dddddd"); // TODO: Personalize
             response.put("head", "safe"); // TODO: Personalize
-            response.put("tail", "pixel"); // TODO: Personalize
+            response.put("tail", "freckled"); // TODO: Personalize
             return response;
         }
 
