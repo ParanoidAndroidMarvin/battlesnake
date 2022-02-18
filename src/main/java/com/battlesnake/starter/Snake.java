@@ -161,6 +161,7 @@ public class Snake {
 
             JsonNode head = moveRequest.get("you").get("head");
             JsonNode body = moveRequest.get("you").get("body");
+            JsonNode snakes = moveRequest.get("snakes");
 
             int boardHeigth = moveRequest.get("board").get("height").asInt();
             int boardWidth = moveRequest.get("board").get("width").asInt();
@@ -183,6 +184,7 @@ public class Snake {
             // TODO: Using information from 'moveRequest', don't let your Battlesnake pick a
             // move
             // that would collide with another Battlesnake
+            avoidOtherSnakes(head, snakes, possibleMoves);
 
             // TODO: Using information from 'moveRequest', make your Battlesnake move
             // towards a
@@ -254,6 +256,33 @@ public class Snake {
                         possibleMoves.remove("down");
                     } else if (headY + 1 == bodyPartY) {
                         possibleMoves.remove("up");
+                    }
+                }
+            }
+        }
+
+        public void avoidOtherSnakes(JsonNode head, JsonNode snakes, ArrayList<String> possibleMoves) {
+            for (int i = 0; i < snakes.size(); i++) {
+                JsonNode body = snakes.get(i);
+                for (int j = 0; j < body.size(); j++) {
+                    JsonNode bodyPart = body.get(j);
+                    int headX = head.get("x").asInt();
+                    int headY = head.get("y").asInt();
+                    int bodyPartX = bodyPart.get("x").asInt();
+                    int bodyPartY = bodyPart.get("y").asInt();
+
+                    if (headY == bodyPartY) {
+                        if (headX - 1 == bodyPartX) {
+                            possibleMoves.remove("left");
+                        } else if (headX + 1 == bodyPartX) {
+                            possibleMoves.remove("right");
+                        }
+                    } else if (headX == bodyPartX) {
+                        if (headY - 1 == bodyPartY) {
+                            possibleMoves.remove("down");
+                        } else if (headY + 1 == bodyPartY) {
+                            possibleMoves.remove("up");
+                        }
                     }
                 }
             }
